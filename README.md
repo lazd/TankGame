@@ -62,6 +62,7 @@ TankGame couldn't have been made without the following freely available works:
 ## Sounds
 
 [Missile Launch by Kibblesbob][Sound: Missile]
+[Various sounds from Bolo &copy; 1993 Stuart Cheshire](http://www.bolo.net/)
 
 [Sound: Missile]: http://soundbible.com/1794-Missle-Launch.html
 
