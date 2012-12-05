@@ -9,7 +9,7 @@ tg.Ground = new Class({
 			segmentsH		: 1,
 			textureRepeatX	: 256/10,
 			textureRepeatY	: 256/10,
-			textureUrl		: 'assets/ground.png'
+			textureUrl		: 'tankGame/textures/ground.png'
 		}, opts);
 
 		var texture = THREE.ImageUtils.loadTexture(opts.textureUrl);
