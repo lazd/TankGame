@@ -70,4 +70,5 @@ TankGame couldn't have been made without the following freely available works:
 # License
 
 Copyright &copy; 2012 Lawrence Davis
+
 [Licensed under the GPL license](https://github.com/lazd/TankGame/blob/master/LICENSE.md)
