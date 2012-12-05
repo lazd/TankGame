@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>TankGame</title>
+
+	<meta name="description" content="TankGame">
+	
+	<!-- CSS -->
+	<link rel="stylesheet/less" type="text/css" href="less/styles.less">
+
+	<!-- LESS CSS -->
+	<script src="lib/less/less.js"></script>
+	
+	<!-- jQuery -->
+	<script src="lib/jquery/jquery.js"></script>
+	
+	<!-- Class -->
+	<script src="lib/class/Class.js"></script>
+	<script src="lib/class/EventEmitter.js"></script>
+	
+	<!-- Socket.io -->
+	<script src="lib/socketio/socket.io.js"></script>
+	
+	<!-- THREE -->
+	<script src="lib/three/three.js"></script>
+	
+	<!-- TankGame -->
+	<script src="tankGame/tg.js"></script>
+
+	<!-- Classes -->
+	<script src="tankGame/classes/tg.Sound.js"></script>
+	<script src="tankGame/classes/tg.Comm.js"></script>
+	<script src="tankGame/classes/tg.CameraControls.js"></script>
+	
+	<!-- Models -->
+	<script src="tankGame/objects/Tank.js"></script>
+	<script src="tankGame/objects/Track.js"></script>
+	<script src="tankGame/objects/Bullet.js"></script>
+	<script src="tankGame/objects/Missile.js"></script>
+	<script src="tankGame/objects/Turret.js"></script>
+
+	<script src="tankGame/classes/tg.GameObject.js"></script>
+	
+	<!-- Tanks -->
+	<script src="tankGame/classes/tg.Tank.js"></script>
+	<script src="tankGame/classes/tg.OtherTank.js"></script>
+	<script src="tankGame/classes/tg.Ground.js"></script>
+	<script src="tankGame/classes/tg.Track.js"></script>
+	
+	<!-- Controls -->
+	<script src="tankGame/classes/tg.Mouse.js"></script>
+	<script src="tankGame/classes/tg.Keyboard.js"></script>
+	<script src="tankGame/classes/tg.Controls.js"></script>
+	
+	<!-- Munitions -->
+	<script src="tankGame/classes/tg.Explosion.js"></script>
+	<script src="tankGame/classes/tg.Bullet.js"></script>
+	<script src="tankGame/classes/tg.Missile.js"></script>
+	
+	<!-- Map Items -->
+	<script src="tankGame/classes/tg.MapItem.js"></script>
+	<script src="tankGame/classes/tg.Crate.js"></script>
+	<script src="tankGame/classes/tg.Turret.js"></script>
+	<script src="tankGame/classes/tg.Barrel.js"></script>
+	<script src="tankGame/classes/tg.OilTank.js"></script>
+	<script src="tankGame/classes/tg.WallSection.js"></script>
+	<script src="tankGame/classes/tg.WallCorner.js"></script>
+	<script src="tankGame/classes/tg.WallConnector.js"></script>
+	
+	<!-- Maps -->
+	<script src="tankGame/maps/lollyPopLand.js"></script>
+	
+	<!-- Game -->
+	<script src="tankGame/classes/tg.Game.js"></script>
+	<script src="tankGame/classes/tg.TankGame.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+			tg.game = new tg.TankGame();
+		});
+	</script>
+
+	<!--
+		Oil tank texture: http://media.photobucket.com/image/recent/DeathniteDT/1-4.png
+		Missile Launch sound: http://soundbible.com/1794-Missle-Launch.html
+	-->
+</head>
+
+<body>
+</body>
+
+</html>
