@@ -22,7 +22,7 @@ tg.Explosion = new Class({
 			size: options.size,
 			opacity: 1,
 			map: THREE.ImageUtils.loadTexture(
-				"tankGame/textures/explosion2.png"
+				"tankGame/textures/explosion.png"
 			),
 			blending: THREE.AdditiveBlending,
 			transparent: true,
