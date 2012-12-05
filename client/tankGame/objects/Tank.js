@@ -1,7 +1,6 @@
 /**
  * Adapted from alteredq's THREE.Car http://alteredqualia.com/
  */
-
 THREE.Tank = function(options) {
 	var scope = this;
 	
