@@ -17,11 +17,6 @@ Open `client/index.html` in your WebGL capable browser. You'll have to run a sim
 3. Run `node server/index.js`
 
 
-# License
-Copyright &copy; 2012 Lawrence Davis
-[Licensed under the GPL license](https://github.com/lazd/TankGame/blob/master/LICENSE.md)
-
-
 # Credits
 
 TankGame couldn't have been made without the following freely available works:
@@ -72,3 +67,9 @@ TankGame couldn't have been made without the following freely available works:
 [Missile Launch by Kibblesbob][Sound: Missile]
 
 [Sound: Missile]: http://soundbible.com/1794-Missle-Launch.html
+
+
+# License
+
+Copyright &copy; 2012 Lawrence Davis
+[Licensed under the GPL license](https://github.com/lazd/TankGame/blob/master/LICENSE.md)
