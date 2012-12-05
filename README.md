@@ -31,9 +31,7 @@ TankGame couldn't have been made without the following freely available works:
 
 [Crate by Rick SL][Model: Crate]
 
-[Missile 1 by piojoman][Model: Missile 1]
-
-[Missile 2 by NORB3d][Model: Missile 2]
+[Missile by piojoman][Model: Missile]
 
 [Barrels by PancakeMan96][Model: Barrels]
 
@@ -45,8 +43,7 @@ TankGame couldn't have been made without the following freely available works:
 [Model: Oil Tank]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/661238
 [Model: Walls]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/288445
 [Model: Crate]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/459185
-[Model: Missile 1]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/326837
-[Model: Missile 2]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/211678
+[Model: Missile]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/326837
 [Model: Barrels]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/677878
 [Model: Turret]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/568855
 [Model: Jet]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/511799
