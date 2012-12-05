@@ -1,31 +1,54 @@
+/*
+TankGame - A multiplayer tank battle game for the web 
+Copyright (C) 2012 Lawrence Davis
+
+TankGame is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+TankGame is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
-var fs = require('fs');
 
-app.listen(1935);
 io.set('log level', 1);
 
-function handler(req, res) {
-	fs.readFile(__dirname + '/index.html',
-	function (err, data) {
-		if (err) {
-			res.writeHead(500);
-			return res.end('Error loading index.html');
-		}
+// Listen on port 1935
+app.listen(1935);
 
-		res.writeHead(200);
-		res.end(data);
-	});
+function handler(req, res) {
+	// Dump out a basic server status page
+	var data = '<!doctype html><head><title>TankGame Server</title></head><body>';
+	
+	data += '<h1>TankGame Server</h1>';
+	
+	data += '<table><thead><th>Name</th><th>Position</th></thead><tbody>'
+	for (var player in players) {
+		var playerInfo = players[player];
+		data += '<tr><td>'+playerInfo.name+'</td><td>'+playerInfo.pos+'</td></tr>';
+	}
+	
+	data += '</tbody></table>';
+	
+	data += '</body></html>';
+	
+	res.writeHead(200);
+	res.end(data);
 }
 
+// Holds players
 var players = {};
 
 io.sockets.on('connection', function (socket) {
 	console.log('Client connected...');
+	
+	// Send welcome message
 	socket.emit('welcome', {
 		message: 'Welcome to tankGame'
 	});
 	
+	// Setup message handlers
 	socket.on('join', function(message) {
 		if (!message.name) {
 			console.error('join failed: Player name was null!');
