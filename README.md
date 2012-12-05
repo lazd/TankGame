@@ -29,13 +29,21 @@ TankGame couldn't have been made without the following freely available works:
 ## Models
 
 [Tank by amazure][Model: Tank]
+
 [Oil tank by jo2bigornia][Model: Oil tank]
+
 [Walls by stuklek][Model: Walls]
+
 [Crate by Rick SL][Model: Crate]
+
 [Missile 1 by piojoman][Model: Missile 1]
+
 [Missile 2 by NORB3d][Model: Missile 2]
+
 [Barrels by PancakeMan96][Model: Barrels]
+
 [Turret by Angryfly][Model: Turret]
+
 [Jet by PyrZern][Model: Turret]
 
 [Model: Tank]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/250966
@@ -48,14 +56,19 @@ TankGame couldn't have been made without the following freely available works:
 [Model: Turret]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/568855
 [Model: Jet]: http://www.turbosquid.com/FullPreview/Index.cfm/ID/511799
 
+
 ## Textures
+
 [Oil tank texture by DeathniteDT][Texture: Oil Tank]
+
 [Explosion by etayrien][Texture: Explosion]
 
 [Texture: Oil Tank]: http://media.photobucket.com/image/recent/DeathniteDT/1-4.png
 [Texture: Explosion]: http://blogs.msdn.com/b/etayrien/archive/2008/02/15/quick-n-dirty-tutorial-making-nice-explosion-sprites.aspx
 
+
 ## Sounds
+
 [Missile Launch by Kibblesbob][Sound: Missile]
 
 [Sound: Missile]: http://soundbible.com/1794-Missle-Launch.html
