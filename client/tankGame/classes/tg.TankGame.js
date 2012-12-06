@@ -99,7 +99,7 @@ tg.TankGame = new Class({
 				}
 				return false;
 			},
-			each: function(callback) {
+			forEach: function(callback) {
 				this._list.forEach(callback);
 			},
 			list: function() {
@@ -555,5 +555,39 @@ tg.TankGame = new Class({
 	
 	switchView: function() {
 		this.options.cameraType = this.cameraControls.options.type = this.cameraControls.options.type == 'overhead' ? 'chase' : 'overhead';
+	},
+	
+	getPositions: function() {
+		var objects = [];
+		
+		// Self
+		var pos = this.tank.getRoot().position;
+		objects.push({
+			type: 'Tank',
+			alliance: 'self',
+			pos: [pos.x, pos.z]
+		});
+		
+		// Enemies
+		this.enemies.forEach(function(enemy) {
+			var pos = enemy.getRoot().position;
+			objects.push({
+				type: 'Tank',
+				alliance: 'enemy',
+				pos: [pos.x, pos.z]
+			});
+		});
+		
+		// Map items
+		this.mapItems.forEach(function(mapItem) {
+			var pos = mapItem.getRoot().position;
+			objects.push({
+				type: mapItem.toString(),
+				alliance: 'none',
+				pos: [pos.x, pos.z]
+			});
+		});
+		
+		return objects;
 	}
 });

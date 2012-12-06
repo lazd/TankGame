@@ -1,4 +1,5 @@
 tg.OilTank = new Class({
+	toString: 'OilTank',
 	extend: tg.MapItem,
 	options: {
 		hp: 150,
