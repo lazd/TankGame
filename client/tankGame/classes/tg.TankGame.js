@@ -266,7 +266,12 @@ tg.TankGame = new Class({
 	},
 	
 	handleKill: function(message) {
-		this.sound.play('explosion');
+		var enemy = this.enemies.get(message.name);
+		
+		new tg.Explosion({
+			game: this,
+			position: enemy.getPosition()
+		});
 		
 		if (message.killer == this.player.name)
 			console.warn('You killed %s!', message.name);

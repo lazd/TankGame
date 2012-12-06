@@ -65,7 +65,9 @@ tg.OtherTank = new Class({
 			this.world.remove(this.tracks[i].model.getModel());
 		}
 	},
-
+	getPosition: function() {
+		return this.getRoot().position.clone();
+	},
 	setPosition: function(pos, rot, tRot) {
 		var time = new Date().getTime();
 		
