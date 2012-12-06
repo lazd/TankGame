@@ -7,21 +7,21 @@ THREE.Tank = function(options) {
 	this.options = options;
 
 	// tank "feel" parameters
-	this.MAX_SPEED		= 75;
-	this.MAX_REVERSE_SPEED	= -this.MAX_SPEED;
+	this.MAX_SPEED = 75;
+	this.MAX_REVERSE_SPEED = -this.MAX_SPEED;
 
-	this.FRONT_ACCELERATION	= 1500;
-	this.BACK_ACCELERATION	= 1200;
-	this.FRONT_DECCELERATION	= 750;
+	this.FRONT_ACCELERATION = 1500;
+	this.BACK_ACCELERATION = 1200;
+	this.FRONT_DECCELERATION = 750;
 	
-	this.MAX_WHEEL_ROTATION	= 1;
-	this.WHEEL_ANGULAR_ACCELERATION	= 3.0;
+	this.MAX_WHEEL_ROTATION = 1;
+	this.WHEEL_ANGULAR_ACCELERATION = 3.0;
 	this.WHEEL_ANGULAR_DECCELERATION = 3.5;
-	this.STEERING_RADIUS_RATIO	= 0.040;
+	this.STEERING_RADIUS_RATIO = 0.040;
 
 	this.MAX_TURRET_WHEEL_ROTATION = this.MAX_WHEEL_ROTATION;
-	this.TURRET_WHEEL_ANGULAR_ACCELERATION	= 2.5;
-	this.TURRET_WHEEL_ANGULAR_DECCELERATION	= 2.75;
+	this.TURRET_WHEEL_ANGULAR_ACCELERATION = 2.5;
+	this.TURRET_WHEEL_ANGULAR_DECCELERATION = 2.75;
 	this.TURRET_STEERING_RADIUS_RATIO = this.STEERING_RADIUS_RATIO;
 
 	this.INITIAL_ROTATION = 0;
@@ -213,6 +213,7 @@ THREE.Tank = function(options) {
 		
 		var vX = Math.sin(this.tankOrientation) * speed;
 		var vZ = Math.cos(this.tankOrientation) * speed;
+		
 		var newX = this.root.position.x + vX * delta;
 		var nexZ = this.root.position.z + vZ * delta;
 		
