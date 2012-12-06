@@ -93,13 +93,14 @@ tg.Comm = new Class({
 				};
 
 				// Store last position broadcasted
-				this.lastRotation	= tankPosition.rot;
-				this.lastTRotation	= tankPosition.tRot;
+				this.lastRotation = tankPosition.rot;
+				this.lastTRotation = tankPosition.tRot;
 				this.lastPosition[0] = tankPosition.pos[0];
 				this.lastPosition[1] = tankPosition.pos[1];
 
 				// Broadcast position
 				this.socket.emit('move', packet);
+				this.lastMessageTime = time;
 			}
 		}
 	},
