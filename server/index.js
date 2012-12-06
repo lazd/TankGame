@@ -23,10 +23,10 @@ function handler(req, res) {
 	
 	data += '<h1>TankGame Server</h1>';
 	
-	data += '<table><thead><th>Name</th><th>Position</th></thead><tbody>'
+	data += '<table><thead><th>Name</th><th>IP</th><th>Position</th></thead><tbody>'
 	for (var player in players) {
 		var playerInfo = players[player];
-		data += '<tr><td>'+playerInfo.name+'</td><td>'+playerInfo.pos+'</td></tr>';
+		data += '<tr><td>'+playerInfo.name+'</td><td>'+playerInfo.ip+'</td><td>'+playerInfo.pos+'</td></tr>';
 	}
 	
 	data += '</tbody></table>';
@@ -41,7 +41,8 @@ function handler(req, res) {
 var players = {};
 
 io.sockets.on('connection', function (socket) {
-	console.log('Client connected...');
+    var ip = socket.handshake.address.address;
+	console.log('Client connected from '+ip+'...');
 	
 	// Send welcome message
 	socket.emit('welcome', {
@@ -67,7 +68,8 @@ io.sockets.on('connection', function (socket) {
 				name: message.name,
 				pos: message.pos,
 				rot: message.rot,
-				tRot: message.tRot
+				tRot: message.tRot,
+				ip: ip
 			};
 
 			// Notify players of new challenger
