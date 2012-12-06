@@ -40,6 +40,16 @@ function handler(req, res) {
 // Holds players
 var players = {};
 
+var mapSize = 1600;
+var maxSpeed = 100; // units per second
+
+function getRandomCoord() {
+	return Math.random()*mapSize - mapSize/2;
+}
+function getRandomPosition() {
+	return [getRandomCoord(), getRandomCoord()];
+}
+
 io.sockets.on('connection', function (socket) {
     var ip = socket.handshake.address.address;
 	console.log('Client connected from '+ip+'...');
@@ -51,8 +61,13 @@ io.sockets.on('connection', function (socket) {
 	
 	// Setup message handlers
 	socket.on('join', function(message) {
+		if (players[message.name] !== undefined && ip === players[message.name].ip) {
+			console.warn('Error: '+message.name+' tried to join twice!');
+			return;
+		}
+		
 		if (!message.name) {
-			console.error('join failed: Player name was null!');
+			console.error('Error: Cannot join, player name was null!');
 			socket.emit('failed');
 			return false;
 		}
@@ -69,6 +84,7 @@ io.sockets.on('connection', function (socket) {
 				pos: message.pos,
 				rot: message.rot,
 				tRot: message.tRot,
+				lastMove: (new Date()).getTime(),
 				ip: ip
 			};
 
@@ -120,7 +136,7 @@ io.sockets.on('connection', function (socket) {
 			
 			var newPosition = {
 				name: name,
-				pos: [0, 0],
+				pos: getRandomPosition(),
 				rot: 0,
 				tRot: 0
 			};
@@ -147,10 +163,30 @@ io.sockets.on('connection', function (socket) {
 	socket.on('move', function(message) {
 		socket.get('name', function (err, name) {
 			if (players[name]) {
+				var player = players[name];
+				
+				var timeDelta = (message.time-player.lastMove)/1000;
+				
+				var distance = Math.sqrt(Math.pow(player.pos[0]-message.pos[0],2)+Math.pow(player.pos[1]-message.pos[1],2));
+				var speed = distance/timeDelta;
+				if (speed > maxSpeed) {
+					console.warn('Cheat: '+name+' attempted to move at '+speed+' u/s ('+distance+' in '+timeDelta+')');
+				
+					// Reset to previous position
+					socket.emit('move', {
+						name: name,
+						pos: player.pos,
+						rot: player.rot,
+						tRot: player.tRot
+					});
+					return;
+				}
+					
 				// Update position
-				players[name].pos = message.pos;
-				players[name].rot = message.rot;
-				players[name].tRot = message.tRot;
+				player.pos = message.pos;
+				player.rot = message.rot;
+				player.tRot = message.tRot;
+				player.lastMove = message.time;
 			
 				// Notify players
 				socket.broadcast.emit('move', {
