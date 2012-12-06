@@ -36,28 +36,9 @@
 			this.root.position.copy(options.position);
 			this.root.position.y = Y_POSITION;
 		},
-		addTo: function(world) {
-			// Store world
-			this.world = world;
-	
-			// Add body to world
-			world.add(this.root);
-	
-			return this;
-		},
-		destruct: function() {
-			this.world.remove(this.root);
-			return this;
-		},
 		setOpacity: function(opacity) {
 			this.material.opacity = opacity;
 			return this;
-		},
-		setVisible: function(enable) {
-			this.root.visible = enable;
-		},
-		getModel: function() {
-			return this.model;
 		}
 	});
 }());

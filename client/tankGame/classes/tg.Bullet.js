@@ -1,54 +1,73 @@
-tg.Bullet = new Class({
-	extend: tg.GameObject,
+(function() {
+	// internal helper variables
+	var bulletTexture = {
+		width: 4/5,
+		height: 4/5,
+		depth: 8/5
+	};
 	
-	construct: function(options){
-		// handle parameters
-		options = jQuery.extend({
-			position: new THREE.Vector3(0, 0, 0),
-			rotation: 0
-		}, options);
+	var friendBulletMaterial = new THREE.MeshBasicMaterial({
+		color: tg.config.colors.friend,
+		transparent: true
+	});
 	
-		var bullet = new THREE.Bullet(options);
-		this._bullet = bullet;
-	
-		// Store refernce to model
-		this.bulletModel = this._bullet.root;
+	var enemyBulletMaterial = new THREE.MeshBasicMaterial({
+		color: tg.config.colors.enemy,
+		transparent: true
+	});
 
-		bullet.callback = function(object) {
-			this.trigger('load');
-		}.bind(this);
-	},
+	// create the geometry	
+	var bulletGeometry = new THREE.CubeGeometry(bulletTexture.width, bulletTexture.height, bulletTexture.depth);
 
-	addTo: function(world) {
-		// Store world
-		this.world = world;
+	tg.Bullet = new Class({
+		extend: tg.GameObject,
 	
-		// Store start time
-		this.time = new Date().getTime();
-	
-		// Add body to world
-		world.add(this.bulletModel);
-	
-		// hook the rendering loop and update the bullet model
-		this._loopCb = this._loopCb.bind(this);
-		tg.game.hook(this._loopCb);
-	
-		return this;
-	},
+		construct: function(options){
+			// handle parameters
+			options = jQuery.extend({
+				position: new THREE.Vector3(0, 0, 0),
+				rotation: 0
+			}, options);
+			
+			this.bind(this.update);
+		
+			var Y_POSITION = 8.1;
+		
+			var material = options.type == 'friend' ? friendBulletMaterial : enemyBulletMaterial;
+		
+			// create the mesh
+			this.root = new THREE.Mesh(bulletGeometry, material);
+		
+			// Set initial position
+			this.root.position.copy(options.position);
+			this.root.rotation.y = options.rotation;
 
-	_loopCb: function(delta) {
-		// Update the position of the bullet based on time
-		this._bullet.updateModel(delta);
+			// Set y position, fixed
+			this.root.position.y = Y_POSITION;
+			
+			// Store start time
+			this.time = new Date().getTime();
+		},
+
+		update: function (delta, controls) {
+			// Get the change in distance based on the time the position was last evaluated
+			var forwardDelta = tg.config.weapons.bullet.speed * delta;
+			
+			/*
+			// Debug stuff
+			var bulletDistance = (Math.sin(this.root.rotation.y) * forwardDelta + Math.cos(this.root.rotation.y) * forwardDelta)/2;
+			if (!window.bulletMoved)
+				window.bulletMoved = 0;
+			if (bulletDistance < 50)
+				window.bulletMoved = Math.max(window.bulletMoved, (Math.abs(Math.sin(this.root.rotation.y) * forwardDelta) + Math.abs(Math.cos(this.root.rotation.y)) * forwardDelta)/2);
+			else
+				console.log('Bullet outlier: ', bulletDistance);
+			*/
 	
-		// TBD: check for collisions
-	},
+			// Apply displacement
+			this.root.position.x += Math.sin(this.root.rotation.y) * forwardDelta;
+			this.root.position.z += Math.cos(this.root.rotation.y) * forwardDelta;
+		}
+	});
+}());
 
-	destruct: function() {
-		this.world.remove(this.bulletModel);
-		tg.game.unhook(this._loopCb);
-	},
-
-	getModel: function() {
-		return this.bulletModel;
-	}
-});

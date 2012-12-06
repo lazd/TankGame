@@ -1,4 +1,6 @@
 tg.MapItem = new Class({
+	extend: tg.GameObject,
+	
 	defaults: {
 		position: new THREE.Vector3(0, 0, 0),
 		rotation: 0,
@@ -82,11 +84,11 @@ tg.MapItem = new Class({
 	},
 
 	destruct: function() {
-		this.world.remove(this.getRoot());
+		this.game.scene.remove(this.getRoot());
 
 		new tg.Explosion({
 			position: this.getRoot().position,
-			game: tg.game
+			game: this.game
 		});
 
 		this.destroyed = true;
@@ -115,16 +117,11 @@ tg.MapItem = new Class({
 		this.root.rotation.y = rotation;
 	},
 
-	setVisible: function (enable) {
-		this.root.visible = enable;
-	},
+	addTo: function(game) {
+		this.game = game;
 	
-	addTo: function(world) {
-		// Store world
-		this.world = world;
-	
-		// Add body to world
-		world.add(this.getRoot());
+		// Add body to scene
+		game.scene.add(this.getRoot());
 	
 		return this;
 	},

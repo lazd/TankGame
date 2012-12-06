@@ -16,6 +16,7 @@ var tg = {
 	},
 	config: {
 		comm: {
+			server: 'home.lazd.net:1935',
 			interval: 1
 		},
 		colors: {

@@ -15,26 +15,13 @@ tg.OtherTank = new Class({
 		this.lastPosition = [this.options.position[0], this.options.position[1]];
 
 		this.tank = new THREE.Tank(this.options);
-	},
-	
-	addTo: function(world) {
-		// Store world
-		this.world = world;
-
-		// Add body to world
-		world.add(this.getRoot());
-
-		// Store last position and tracks
+		
+		this.root = this.getRoot();
+		
 		this.tracks = [];
-
-		// hook the rendering loop and update the tank model
-		this._loopCb = this._loopCb.bind(this); // bind to this and store
-		tg.game.hook(this._loopCb);
-
-		return this;
 	},
 
-	_loopCb: function(delta) {
+	update: function(delta) {
 		var time = new Date().getTime();
 
 		// Erase old tracks
@@ -73,15 +60,10 @@ tg.OtherTank = new Class({
 	},
 	
 	destruct: function() {
-		// Remove tank model
-		this.world.remove(this.getRoot());
-
 		// Remove tracks
 		for (var i = 0; i < this.tracks.length; i++) {
 			this.world.remove(this.tracks[i].model.getModel());
 		}
-
-		tg.game.unhook(this._loopCb);
 	},
 
 	setPosition: function(pos, rot, tRot) {
@@ -97,9 +79,10 @@ tg.OtherTank = new Class({
 		// Draw tracks if the otherTank has moved
 		if ((Math.abs(pos[0]-this.lastPosition[0]) + Math.abs(pos[1]-this.lastPosition[1])) > tg.config.tracks.distance) {
 			var trackModel = new tg.Track({
+				game: this.game,
 				position: otherTankPosition.clone(),
 				rotation: otherTankRotation.clone()
-			}).addTo(this.world);
+			});
 
 			// Store tracks
 			this.tracks.push({

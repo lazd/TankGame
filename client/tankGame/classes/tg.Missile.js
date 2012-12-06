@@ -1,54 +1,85 @@
-tg.Missile = new Class({
-	extend: tg.GameObject,
-	
-	construct: function(options){
-		// handle parameters
-		options = jQuery.extend({
-			position: new THREE.Vector3(0, 0, 0),
-			rotation: 0
-		}, options);
-	
-		var bullet = new THREE.Missile(options);
-		this._bullet = bullet;
-	
-		// Store refernce to model
-		this.bulletModel = this._bullet.root;
+(function() {
+	var faceMaterial = new THREE.MeshFaceMaterial({
+		vetexColor: THREE.FaceColors
+	});
 
-		bullet.callback = function(object) {
-			this.trigger('load');
-		}.bind(this);
-	},
+	tg.Missile = new Class({
+		extend: tg.GameObject,
+	
+		construct: function(options){
+			// handle parameters
+			options = jQuery.extend({
+				position: new THREE.Vector3(0, 0, 0),
+				rotation: 0
+			}, options);
+	
 
-	addTo: function(world) {
-		// Store world
-		this.world = world;
+			// missile "feel" parameters
+			this.MAX_SPEED		= 350;
+			this.ACCELERATION	= 450;
+			this.MODEL_ROTATION = Math.PI;
 	
-		// Store start time
-		this.time = new Date().getTime();
-	
-		// Add body to world
-		world.add(this.bulletModel);
-	
-		// hook the rendering loop and update the bullet model
-		this._loopCb = this._loopCb.bind(this);
-		tg.game.hook(this._loopCb);
-	
-		return this;
-	},
+			// internal control variables
+			this.speed = 0;
 
-	_loopCb: function(delta) {
-		// Update the position of the bullet based on time
-		this._bullet.updateModel(delta);
+			// internal helper variables
+			this.Y_POSITION = 8.1;
 	
-		// TBD: check for collisions
-	},
+			// root object
+			this.root = new THREE.Object3D();
+	
+			// Set initial position
+			this.root.position.copy(options.position);
+			this.root.rotation.y = options.rotation;
 
-	destruct: function() {
-		this.world.remove(this.bulletModel);
-		tg.game.unhook(this._loopCb);
-	},
+			// Set y position, fixed
+			this.root.position.y = this.Y_POSITION;
+	
+			var missileColor = options.type == 'friend' ? tg.config.colors.friend : tg.config.colors.enemy;
+	
+			// Load model
+			var loader = new THREE.JSONLoader();
+			loader.load("tankGame/models/missilePhoenix.js", function(geometry) {
+				this.missileGeometry = geometry;
+		
+				// geometry.materials[0] = new THREE.MeshLambertMaterial({ color: missileColor, shading: THREE.FlatShading, vertexColors: THREE.VertexColors });
+				geometry.materials[0] = new THREE.MeshPhongMaterial({ color: missileColor, ambient: 0x050505, shading: THREE.FlatShading, vertexColors: THREE.VertexColors });
+		
+				// Body
+				this.bodyMesh = new THREE.Mesh(geometry, faceMaterial);
+				this.bodyMesh.scale.set(tg.config.size.missile, tg.config.size.missile, tg.config.size.missile);
+				this.bodyMesh.rotation.y = this.MODEL_ROTATION;
+				this.bodyMesh.castShadow = true;
+				this.bodyMesh.receiveShadow = true;
+				this.root.add(this.bodyMesh);
+			}.bind(this));
+		
+			// Store start time
+			this.time = new Date().getTime();
+		},
+	
+		setPosition: function(position, rotation) {
+			// position
+			this.root.position.x = position[0];
+			this.root.position.z = position[1];
 
-	getModel: function() {
-		return this.bulletModel;
-	}
-});
+			// rotation
+			this.root.rotation.y = rotation;
+		},
+	
+		update: function(delta) {
+			this.speed = THREE.Math.clamp(this.speed + delta * this.ACCELERATION, 0, this.MAX_SPEED);
+		
+			// bullet update
+			var forwardDelta = this.speed * delta;
+
+			// displacement
+			this.root.position.x += Math.sin(this.root.rotation.y) * forwardDelta;
+			this.root.position.z += Math.cos(this.root.rotation.y) * forwardDelta;
+		
+			// Spin missile according to speed
+			this.root.rotation.z += this.speed/Math.PI/512;
+		}
+	});
+
+}());

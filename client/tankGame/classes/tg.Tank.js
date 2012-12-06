@@ -5,17 +5,23 @@ tg.Tank = new Class({
 	construct: function(options) {
 		// handle parameters
 		this.options = jQuery.extend({
-			type: 'friend',
-			game: null
+			type: 'friend'
 		}, options);
 
 		var tank = new THREE.Tank(this.options);
 		this.tank = tank;
+		this.root = tank.getRoot();
+		
+		this.bind(this.update);
 
-		tank.callback = function(object) {
-			this.trigger('load');
-		}.bind(this);
+		// Store last position and tracks
+		this.tracks = [];
+		this.lastPosition = this.getRoot().position.clone();
 
+		// Store bullets and last fire time
+		this.bullets = [];
+		this.lastFireTime = {};
+		
 		// the controls of the tank
 		this._controlsTank = {
 			moveForward: false,
@@ -28,29 +34,7 @@ tg.Tank = new Class({
 		this.controlsLoopCb = this.controlsLoopCb.bind(this);
 	},
 	
-	addTo: function(scene) {
-		// Store scene
-		this.scene = scene;
-
-		// Add body to scene
-		scene.add(this.getRoot());
-
-		// Store last position and tracks
-		this.tracks = [];
-		this.lastPosition = this.getRoot().position.clone();
-
-		// Store bullets and last fire time
-		this.bullets = [];
-		this.lastFireTime = {};
-
-		// hook the rendering loop and update the tank model
-		this._loopCb = this._loopCb.bind(this); // bind to this and store
-		this.options.game.hook(this._loopCb);
-
-		return this;
-	},
-
-	_loopCb: function(delta) {
+	update: function(delta) {
 		var time = new Date().getTime();
 
 		// Get the tanks current position
@@ -61,8 +45,8 @@ tg.Tank = new Class({
 		// Update the position of the tank based on controls
 		this.tank.updateModel(delta, this._controlsTank);
 
-		if (this._controlsTank.fire && (!this.lastFireTime[this.options.game.currentWeapon] || time-this.lastFireTime[this.options.game.currentWeapon] >= tg.config.weapons[this.options.game.currentWeapon].interval)) {
-			var type = this.options.game.currentWeapon;
+		if (this._controlsTank.fire && (!this.lastFireTime[this.game.currentWeapon] || time-this.lastFireTime[this.game.currentWeapon] >= tg.config.weapons[this.game.currentWeapon].interval)) {
+			var type = this.game.currentWeapon;
 			var bulletPosition = tankPosition.clone();
 
 			// Position bullet at muzzle, not center of tank
@@ -75,17 +59,19 @@ tg.Tank = new Class({
 			var bulletModel;
 			if (type == 'missile') {
 				bulletModel = new tg.Missile({
+					game: this.game,
 					position: bulletPosition,
 					rotation: turretRotation,
 					type: 'friend'
-				}).addTo(this.scene);
+				});
 			}
 			else {
 				bulletModel = new tg.Bullet({
+					game: this.game,
 					position: bulletPosition,
 					rotation: turretRotation,
 					type: 'friend'
-				}).addTo(this.scene);
+				});
 			}
 
 			// Store bullet
@@ -102,19 +88,20 @@ tg.Tank = new Class({
 				type: type
 			});
 
-			var soundInfo = tg.config.weapons[this.options.game.currentWeapon].sound;
-			this.options.game.sound.play(soundInfo.file, soundInfo.volume);
+			var soundInfo = tg.config.weapons[this.game.currentWeapon].sound;
+			this.game.sound.play(soundInfo.file, soundInfo.volume);
 
 			// Store last fire time
-			this.lastFireTime[this.options.game.currentWeapon] = time;
+			this.lastFireTime[this.game.currentWeapon] = time;
 		}
 
 		// Draw tracks if the tank has moved
 		if ((Math.abs(tankPosition.x-this.lastPosition.x) + Math.abs(tankPosition.z-this.lastPosition.z)) > tg.config.tracks.distance) {
 			var trackModel = new tg.Track({
+				game: this.game,
 				position: tankPosition.clone(),
 				rotation: new THREE.Vector3(0, tankRotation, 0)
-			}).addTo(this.scene);
+			});
 
 			// Store tracks
 			this.tracks.push({
@@ -145,7 +132,7 @@ tg.Tank = new Class({
 	},
 
 	destroy: function() {
-		this.options.game.unhook(this._loopCb);
+		this.game.unhook(this._loopCb);
 	},
 
 	getHeading: function() {

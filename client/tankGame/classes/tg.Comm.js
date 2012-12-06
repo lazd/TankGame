@@ -11,8 +11,11 @@ tg.Comm = new Class({
 	},
 	construct: function(options) {
 		options = jQuery.extend({
-			server: 'http://home.lazd.net:1935'
+			server: 'localhost:1935'
 		}, options);
+		
+		// Prepend http
+		options.server = 'http://'+options.server;
 		
 		this.player = options.player;
 		this.tank = options.tank;

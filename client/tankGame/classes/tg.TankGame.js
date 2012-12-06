@@ -64,7 +64,7 @@ tg.TankGame = new Class({
 		// Tank
 		this.tank = new tg.Tank({
 			game: this
-		}).addTo(this.scene);
+		});
 		
 		// Create camera that follows tank
 		this.cameraControls = new tg.CameraControls({
@@ -145,11 +145,12 @@ tg.TankGame = new Class({
 				}
 				
 				var otherTank = new tg.OtherTank({
+					game: that,
 					name: enemyInfo.name,
 					position: enemyInfo.pos,
 					rotation: enemyInfo.rot,
 					turretRotation: enemyInfo.tRot
-				}).addTo(that.scene);
+				});
 
 				this._list.push(otherTank);
 				this._map[enemyInfo.name] = otherTank; // this._map.set(enemyInfo.name, otherTank);
@@ -167,7 +168,8 @@ tg.TankGame = new Class({
 		// Communication
 		this.comm = new tg.Comm({
 			player: this.player,
-			tank: this.tank
+			tank: this.tank,
+			server: tg.config.comm.server
 		});
 		
 		this.comm.on('fire', this.handleEnemyFire);
@@ -218,9 +220,7 @@ tg.TankGame = new Class({
 		this.scene.add(this.directionalLight);
 		
 		// Ground plane
-		this.ground = new tg.Ground();
-		this.groundMesh = this.ground.mesh;
-		this.scene.add(this.groundMesh);
+		this.ground = new tg.Ground({ game: this });
 		
 		/******************
 		Initialization
@@ -292,17 +292,19 @@ tg.TankGame = new Class({
 		var bulletModel
 		if (message.type == 'missile') {
 			bulletModel = new tg.Missile({
+				game: this,
 				position: new THREE.Vector3(message.pos[0], 0, message.pos[1]),
 				rotation: message.rot,
 				type: 'enemy'
-			}).addTo(this.scene);
+			});
 		}
 		else {
 			bulletModel = new tg.Bullet({
+				game: this,
 				position: new THREE.Vector3(message.pos[0], 0, message.pos[1]),
 				rotation: message.rot,
 				type: 'enemy'
-			}).addTo(this.scene);
+			});
 		}
 		
 		this.enemyBullets.push({
@@ -350,9 +352,10 @@ tg.TankGame = new Class({
 			return null;
 		}
 		var mapItem = new ItemClass({
+			game: this,
 			position: new THREE.Vector3(item.pos[0], 1, item.pos[1]),
 			rotation: item.rot || 0
-		}).addTo(this.scene);
+		});
 	
 		return mapItem;
 	},

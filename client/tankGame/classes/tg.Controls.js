@@ -23,7 +23,7 @@ tg.Tank.prototype.controlsLoopCb = function(delta, now) {
 	var mouse2D = mouse.position();
 	
 	// Turret follows mouse from overhead view
-	if (this.options.game.options.cameraType == 'overhead') {
+	if (this.game.options.cameraType == 'overhead') {
 		var tank = [window.innerWidth/2, window.innerHeight/2];
 	
 		var z = tank[1]-mouse2D[1];
@@ -33,9 +33,9 @@ tg.Tank.prototype.controlsLoopCb = function(delta, now) {
 	
 		this.getTurret().rotation.y = targetAngle - tankRotation;
 	}
-	else if (this.options.game.options.cameraType == 'chase' && this.options.game.options.cameraFollow == 'tank') {
+	else if (this.game.options.cameraType == 'chase' && this.game.options.cameraFollow == 'tank') {
 		// Find mouse in 3D space
-		var mouse3D = this.options.game.get3DCoords(mouse2D[0], mouse2D[1]);
+		var mouse3D = this.game.get3DCoords(mouse2D[0], mouse2D[1]);
     
 		// Get direction
 		var x = tankPosition.x-mouse3D.x;
@@ -44,10 +44,10 @@ tg.Tank.prototype.controlsLoopCb = function(delta, now) {
 	  
 		this.getTurret().rotation.y = targetAngle - tankRotation + Math.PI*1.5;
 	}
-	else if (this.options.game.pointerLocked) {
+	else if (this.game.pointerLocked) {
 		// do nothin
-		if (this.options.game.customRotation !== undefined)
-			this.getTurret().rotation.y = this.options.game.customRotation - tankRotation;
+		if (this.game.customRotation !== undefined)
+			this.getTurret().rotation.y = this.game.customRotation - tankRotation;
 	}
 	else {
 		var screenVal = (window.innerWidth/2-mouse2D[0])/window.innerWidth;
@@ -56,7 +56,7 @@ tg.Tank.prototype.controlsLoopCb = function(delta, now) {
 		
 		this.getTurret().rotation.y = targetAngle - tankRotation - Math.PI*1.5;
 	}
-	
+		
 	this.controls().moveLeft		= keyboard.pressed(this.keyMap.keyStateLeft) || keyboard.pressed(this.keyMap.keyStateLeft2);
 	this.controls().moveRight		= keyboard.pressed(this.keyMap.keyStateRight) || keyboard.pressed(this.keyMap.keyStateRight2);
 	this.controls().moveForward		= keyboard.pressed(this.keyMap.keyStateUp) || keyboard.pressed(this.keyMap.keyStateUp2);
