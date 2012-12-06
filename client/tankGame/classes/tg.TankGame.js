@@ -337,7 +337,10 @@ tg.TankGame = new Class({
 	},
 	
 	handleDie: function(otherPlayerName) {
-		this.sound.play('explosion');
+		new tg.Explosion({
+			game: this,
+			position: this.tank.getRoot().position
+		});
 		
 		this.comm.died(otherPlayerName);
 		
