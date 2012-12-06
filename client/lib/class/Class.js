@@ -187,6 +187,7 @@ var Class;
 			}
 			else {
 				console.warn("Class.inherited: can't call inherited method for '%s': no method by that name found", methodName);
+				console.trace();
 			}
 		};
 		
@@ -222,7 +223,7 @@ var Class;
 
 			// call superclass constructor
 			if (extend && extend.prototype && typeof extend.prototype.construct === 'function') {
-				extend.prototype.construct.apply(this, arguments);			
+				extend.prototype.construct.apply(this, arguments);
 			}
 
 			// call constructor
@@ -239,6 +240,9 @@ var Class;
 
 			// Call all inherited construct functions
 			prototype.construct.apply(instance, arguments);
+			
+			if (instance.init)
+				instance.init();
 
 			return instance;
 		};
