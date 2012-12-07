@@ -41,7 +41,7 @@ function handler(req, res) {
 var players = {};
 
 var mapSize = 1600;
-var maxSpeed = 100; // units per second
+var maxSpeed = 200; // units per second
 
 function getRandomCoord() {
 	return Math.random()*mapSize - mapSize/2;
@@ -134,18 +134,21 @@ io.sockets.on('connection', function (socket) {
 				killer: message.killer
 			});
 			
-			var newPosition = {
+			var newPos = getRandomPosition();
+			var packet = {
 				name: name,
-				pos: getRandomPosition(),
+				pos: newPos,
 				rot: 0,
 				tRot: 0
 			};
 			
+			players[name].pos = newPos;
+			
 			// Notify self
-			socket.emit('move', newPosition);
+			socket.emit('move', packet);
 			
 			// Notify players
-			socket.broadcast.emit('move', newPosition);
+			socket.broadcast.emit('move', packet);
 		});
 	});
 	
