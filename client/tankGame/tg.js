@@ -27,6 +27,23 @@ var tg = {
 			fadeTime: 5000,
 			distance: 5
 		},
+		tank: {
+			maxSpeed: 75,
+			maxReverseSpeed: -75,
+            
+			backDeceleration: 1200,
+			frontDeceleration: 750,
+	        
+			maxWheelRotation: 1,
+			wheelAngularAcceleration: 3.0,
+			wheelAngularDecceleration: 3.5,
+			steeringRadiusRatio: 0.040,
+            
+			initialRotation: 0,
+			initialTurretRotation: Math.PI/2,
+	        
+			modelRotation: Math.PI/2
+		},
 		weapons: {
 			bullet: {
 				interval: 125,
