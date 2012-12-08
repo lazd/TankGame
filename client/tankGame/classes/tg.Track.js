@@ -18,8 +18,11 @@
 		construct: function(options){
 			options = jQuery.extend({
 				position: new THREE.Vector3(0, 0, 0),
-				rotation: new THREE.Vector3(0, 0, 0)
+				rotation: new THREE.Vector3(0, 0, 0),
+				time: 0
 			}, options);
+	
+			this.time = options.time;
 	
 			var Y_POSITION = 1;
 		
