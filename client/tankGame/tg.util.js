@@ -23,6 +23,13 @@ tg.util.getHex = function(rgb) {
 };
 
 /**
+	Easing function for decelleration etc
+*/
+tg.util.exponentialEaseOut = function (k) {
+	return k === 1 ? 1 : - Math.pow(2, - 10 * k) + 1;
+};
+
+/**
 	Return a function that will animate a color
 */
 tg.util.getColorAnimator = function(colors, time) {
