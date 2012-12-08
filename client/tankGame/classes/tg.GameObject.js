@@ -38,6 +38,11 @@ tg.GameObject = new Class({
 		return this.root;
 	},
 	
+	// TODO: use only getModel or getRoot
+	getRoot: function() {
+		return this.root;
+	},
+	
 	show: function() {
 		this.root.visible = true;
 	},
