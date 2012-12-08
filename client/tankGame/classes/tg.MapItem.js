@@ -1,4 +1,5 @@
 tg.MapItem = new Class({
+	toString: 'MapItem',
 	extend: tg.GameObject,
 	
 	defaults: {

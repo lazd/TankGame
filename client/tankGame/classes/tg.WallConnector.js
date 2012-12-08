@@ -1,4 +1,5 @@
 tg.WallConnector = new Class({
+	toString: 'WallConnector',
 	extend: tg.MapItem,
 	options: {
 		model: {

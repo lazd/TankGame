@@ -1,4 +1,5 @@
 tg.Turret = new Class({
+	toString: 'Turret',
 	extend: tg.MapItem,
 	options: {
 		hp: 7,

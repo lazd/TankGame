@@ -1,4 +1,5 @@
 tg.WallSection = new Class({
+	toString: 'WallSection',
 	extend: tg.MapItem,
 	options: {
 		hp: 1000,

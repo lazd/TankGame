@@ -1,4 +1,5 @@
 tg.Crate = new Class({
+	toString: 'Crate',
 	extend: tg.MapItem,
 	options: {
 		hp: 21,

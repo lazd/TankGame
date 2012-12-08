@@ -1,4 +1,5 @@
 tg.Barrel = new Class({
+	toString: 'Barrel',
 	extend: tg.MapItem,
 	options: {
 		hp: 7,

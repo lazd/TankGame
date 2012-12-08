@@ -1,4 +1,5 @@
 tg.WallCorner = new Class({
+	toString: 'WallCorner',
 	extend: tg.MapItem,
 	options: {
 		hp: 1000,
