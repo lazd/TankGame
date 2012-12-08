@@ -155,7 +155,7 @@ tg.Game = new Class({
 	
 	start: function() {
 		this._doRender = true;
-		this.animate();
+		requestAnimationFrame(this.animate);
 	},
 	
 	animate: function(time) {
