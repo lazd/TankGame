@@ -1,230 +1,240 @@
-tg.Tank = new Class({
-	toString: 'Tank',
-	extend: tg.GameObject,
+(function() {
+	var faceMaterial = new THREE.MeshFaceMaterial({
+		vetexColor: THREE.FaceColors
+	});
+
+	var hitBoxMaterial = new THREE.MeshBasicMaterial({
+		color: 0xFF0000,
+		doubleSided: true
+	});
+
+	var hitBoxGeometry = new THREE.CubeGeometry(13.5, 9, 26.2);
+
+	tg.Tank = new Class({
+		extend: tg.GameObject,
+		
+		construct: function(options) {
+			// handle parameters
+			this.options = jQuery.extend({
+				name: 'Unknown',
+				type: 'friend',
+				position: new THREE.Vector3(0, 0, 0),
+				rotation: 0,
+				turretRotation: 0
+			}, options);
+			
+			// internal control variables
+			this.loaded = false;
 	
-	construct: function(options) {
-		// handle parameters
-		this.options = jQuery.extend({
-			type: 'friend'
-		}, options);
-
-		var tank = new THREE.Tank(this.options);
-		this.tank = tank;
-		this.root = tank.getRoot();
+			this.speed = 0;
 		
-		this.bind(this.update);
-
-		// Store last position and tracks
-		this.tracks = [];
-		this.lastPosition = this.getRoot().position.clone();
-
-		// Store bullets and last fire time
-		this.bullets = [];
-		this.lastFireTime = {};
-		
-		// the controls of the tank
-		this._controlsTank = {
-			moveForward: false,
-			moveBackward: false,
-			moveLeft: false,
-			moveRight: false,
-			fire: false
-		};
-		
-		this.controlsLoopCb = this.controlsLoopCb.bind(this);
-	},
+			this.wheelOrientation = 0;
 	
-	update: function(delta) {
-		var time = new Date().getTime();
+			this.turretOrientation = tg.config.tank.initialTurretRotation;
+			this.tankOrientation = tg.config.tank.initialRotation;
 
-		// Get the tanks current position
-		var tankPosition = this.getRoot().position;
-		var tankRotation = this.getRoot().rotation.y;
-		var turretRotation = this.getTurret().rotation.y+tankRotation;
-
-		// Update the position of the tank based on controls
-		this.tank.updateModel(delta, this._controlsTank);
-
-		if (this._controlsTank.fire && (!this.lastFireTime[this.game.currentWeapon] || time-this.lastFireTime[this.game.currentWeapon] >= tg.config.weapons[this.game.currentWeapon].interval)) {
-			var type = this.game.currentWeapon;
-			var bulletPosition = tankPosition.clone();
-
-			// Position bullet at muzzle, not center of tank
-			var deltaX = Math.sin(turretRotation) * 25;
-			var deltaZ = Math.cos(turretRotation) * 25;
-			bulletPosition.x += deltaX;
-			bulletPosition.z += deltaZ;
-
-			// Create ordinance
-			var bulletModel;
-			if (type == 'missile') {
-				bulletModel = new tg.Missile({
-					game: this.game,
-					position: bulletPosition,
-					rotation: turretRotation,
-					type: 'friend'
+			// internal helper variables
+			this.Y_POSITION = 6;
+	
+			// root object
+			this.root = new THREE.Object3D();
+			this.root.position.set(0, this.Y_POSITION, 0);
+			this.root.rotation.set(0, tg.config.tank.initialRotation, 0);
+	
+			this.hitBox = new THREE.Mesh(hitBoxGeometry, hitBoxMaterial);
+			this.hitBox.visible = false;
+			this.root.add(this.hitBox);
+	
+			this.body = new THREE.Object3D();
+			this.body.position.set(0, 0, 4);
+			this.root.add(this.body);
+	
+			this.turret = new THREE.Object3D();
+			this.turret.position.set(0, 0.5, 0);
+			this.root.add(this.turret);
+	
+			this.loadPartsJSON("tankGame/models/tankBody.js", "tankGame/models/tankTurret.js");
+	
+			this.tracks = [];
+			this.lastPosition = this.options.position.clone();
+		},
+		
+	
+		destruct: function() {
+			// Remove tracks
+			for (var i = 0; i < this.tracks.length; i++) {
+				this.tracks[i].destruct();
+			}
+		},
+		
+		createTank: function() {
+			if (!this.tankGeometry || !this.turretGeometry)
+				return false;
+	
+			var tankMaterial;
+			if (this.options.type == 'friend') {
+				tankMaterial = new THREE.MeshLambertMaterial({
+					color: tg.config.colors.friend,
+					ambient: 0x222222,
+					shading: THREE.SmoothShading,
+					vertexColors: THREE.VertexColors
 				});
 			}
 			else {
-				bulletModel = new tg.Bullet({
-					game: this.game,
-					position: bulletPosition,
-					rotation: turretRotation,
-					type: 'friend'
+				tankMaterial = new THREE.MeshLambertMaterial({
+					color: tg.config.colors.enemy,
+					ambient: 0x222222,
+					shading: THREE.SmoothShading,
+					vertexColors: THREE.VertexColors
 				});
 			}
+			
+			this.tankGeometry.materials[0] = tankMaterial;
+			this.turretGeometry.materials[0] = tankMaterial;
 
-			// Store bullet
-			this.bullets.push({
-				instance: bulletModel,
-				type: type,
-				time: time
+			// Body
+			this.bodyMesh = new THREE.Mesh(this.tankGeometry, faceMaterial);
+			this.bodyMesh.scale.set(tg.config.size.tank, tg.config.size.tank, tg.config.size.tank);
+			this.bodyMesh.rotation.y = tg.config.tank.modelRotation;
+			this.bodyMesh.castShadow = true;
+			this.bodyMesh.receiveShadow = true;
+			this.body.add(this.bodyMesh);
+	
+			// Turret
+			this.turretMesh = new THREE.Mesh(this.turretGeometry, faceMaterial);
+			this.turretMesh.scale.set(tg.config.size.tank, tg.config.size.tank, tg.config.size.tank);
+			this.turretMesh.rotation.y = tg.config.tank.modelRotation;
+			this.turretMesh.position.z = 4;
+			this.turretMesh.castShadow = true;
+			this.turretMesh.receiveShadow = true;
+			this.turret.add(this.turretMesh);
+	
+			this.loaded = true;
+		},
+		
+		// Refactor to generic loader, put in gameobject
+		loadPartsJSON: function(bodyURL, turretURL) {
+			var loader = new THREE.JSONLoader();
+
+			//console.log('Loading %s and %s', bodyURL, turretURL);
+			var scope = this;
+			loader.load(bodyURL, function(geometry) {
+				scope.tankGeometry = geometry;
+				scope.createTank();
 			});
-
-			// Emit event
-			this.trigger('fire', {
-				pos: [bulletPosition.x, bulletPosition.z],
-				rot: turretRotation,
-				type: type
+			
+			loader.load(turretURL, function(geometry) {
+				scope.turretGeometry = geometry;
+				scope.createTank();
 			});
+		},
+		
+		update: function(delta) {
+			this.updateTracks();
+		},
+		
+		updateTracks: function() {
+			var time = new Date().getTime();
 
-			var soundInfo = tg.config.weapons[this.game.currentWeapon].sound;
-			this.game.sound.play(soundInfo.file, soundInfo.volume);
+			// Get current position and rotation vectors
+			var curPosition = this.getRoot().position.clone();
+			var curRotation = this.getRoot().rotation.clone();
 
-			// Store last fire time
-			this.lastFireTime[this.game.currentWeapon] = time;
-		}
+			// Draw tracks if the otherTank has moved
+			if ((Math.abs(curPosition.x-this.lastPosition.x) + Math.abs(curPosition.z-this.lastPosition.z)) > tg.config.tracks.distance) {
+				var track = new tg.Track({
+					game: this.game,
+					position: curPosition,
+					rotation: curRotation,
+					time: time
+				});
+				
+				// Store tracks
+				this.tracks.push(track);
 
-		// Draw tracks if the tank has moved
-		if ((Math.abs(tankPosition.x-this.lastPosition.x) + Math.abs(tankPosition.z-this.lastPosition.z)) > tg.config.tracks.distance) {
-			var trackModel = new tg.Track({
-				game: this.game,
-				position: tankPosition.clone(),
-				rotation: new THREE.Vector3(0, tankRotation, 0)
-			});
-
-			// Store tracks
-			this.tracks.push({
-				instance: trackModel,
-				time: time
-			});
-
-			this.lastPosition = tankPosition.clone();
-		}
-
-		// Erase old tracks
-		for (var i = 0; i < this.tracks.length; i++) {
-			var trackEntry = this.tracks[i];
-			var age = time-trackEntry.time;
-
-			// Remove stale tracks
-			if (age > tg.config.tracks.fadeTime) {
-				trackEntry.instance.destruct();
-				this.tracks.splice(i, 1);
-				i--;
+				this.lastPosition = curPosition;
 			}
-			else {
-				// Fade old tracks
-				var opacity = 1-age/tg.config.tracks.fadeTime;
-				trackEntry.instance.setOpacity(opacity);
+		
+			// Erase old tracks
+			for (var i = this.tracks.length-1; i >= 0; i--) {
+				var track = this.tracks[i];
+				var age = time-track.time;
+
+				// Remove stale tracks
+				if (age > tg.config.tracks.fadeTime) {
+					this.tracks.splice(i, 1);
+					track.destruct();
+				}
+				else {
+					// Fade old tracks
+					var opacity = 1-(age/tg.config.tracks.fadeTime);
+					track.setOpacity(opacity);
+				}
 			}
-		}
-	},
+		},
+	
+		getPosition: function() {
+			return this.root.position.clone();
+		},
 
-	destroy: function() {
-		this.game.unhook(this._loopCb);
-	},
+		setPosition: function (position, rotation, tRot) {
+			// position
+			this.root.position.x = position[0];
+			this.root.position.z = position[1];
 
-	getHeading: function() {
-		var tankRotation = this.getRoot().rotation.y % (Math.PI*2);
-		
-		if (tankRotation < 0)
-		 	tankRotation = Math.PI*2 + tankRotation;
-		
-		return tankRotation;
-	},
+			// rotation
+			this.root.rotation.y = rotation !== undefined ? rotation : this.root.rotation.y;
 	
-	getDirection: function() {
-		var tankRotation = this.getHeading();
-		
-		var directionNS = '';
-		var directionEW = '';
-		
-		var Pi2 = Math.PI/2;
-		var TwoPi = Math.PI*2;
-		
-		var north = Math.PI+Pi2;
-		var south = Math.PI-Pi2;
-		
-		if ((tankRotation >= 0 && tankRotation <= Pi2) || (tankRotation >= TwoPi-Pi2 && tankRotation <= TwoPi)) {
-			directionEW = 'west';
-		}
-		else if (tankRotation >= Math.PI-Pi2 && tankRotation <= Math.PI+Pi2) {
-			directionEW = 'east';
-		}
-		
-		if (tankRotation >= north-Pi2 && tankRotation <= north+Pi2) {
-			directionNS = 'north';
-		}
-		else if (tankRotation >= south-Pi2 && tankRotation <= south+Pi2) {
-			directionNS = 'south';
-		}
-		
-		return [directionNS, directionEW];
-	},
-	
-	getPosition: function() {
-		var tankPosition = this.getRoot().position;
-		var tankRotation = this.getRoot().rotation;
-		var turretRotation = this.getTurret().rotation;
+			this.turret.rotation.y = tRot !== undefined ? tRot : this.turret.rotation.y;
+		},
 
-		return {
-			pos: [tankPosition.x, tankPosition.z],
-			rot: tankRotation.y,
-			tRot: turretRotation.y
-		};
-	},
+		reset: function(pos, rotation, tRot) {
+			this.wheelOrientation = 0;
+			this.tankOrientation = 0;
+			this.speed = 0;
+			this.root.position.x = pos ? pos[0] : 0;
+			this.root.position.z = pos ? pos[1] : 0;
+			this.turretOrientation = tRot || tg.config.tank.initialTurretRotation;
+			this.tankOrientation = rotation || tg.config.tank.initialRotation;
+		},
+		
+		applyOpacity: function(opacity, obj, time) {
+			setTimeout(function() {
+				obj.opacity = opacity;
+			}, time);
+		},
 
-	reset: function(pos, rotation) {
-		this.tank.reset(pos, rotation);
-	},
+		takeHit: function() {
+			var steps = 20;
+			for (var i = 0; i <= steps; i++) {
+				this.applyOpacity(i/steps, this.tankGeometry.materials[0], i*5);
+				this.applyOpacity(i/steps, this.turretGeometry.materials[0], i*5);
+			}
+		},
+	
+		getBody: function() {
+			return this.body;
+		},
 
-	setPosition: function(pos, rot, tRot) {
-		this.getRoot().position.x = pos[0];
-		this.getRoot().position.z = pos[1];
-		this.getRoot().rotation.y = rot;
-		this.getTurret().rotation.y = tRot - rot;
-	},
+		getTurret: function() {
+			return this.turret;
+		},
+
+		getType: function() {
+			return this.options.type;
+		},
 	
-	translateZ: function(by) {
-		this.getRoot().position.z += by;
-	},
-	
-	translateX: function(by) {
-		this.getRoot().position.x += by;
-	},
-	
-	rotate: function(by) {
-		this.tankOrientation += by;
-	},
-	
-	getRoot: function() {
-		return this.tank.getRoot();
-	},
-	
-	getBody: function() {
-		return this.tank.getBody();
-	},
-	
-	getTurret: function() {
-		return this.tank.getTurret();
-	},
-	
-	getHitBox: function() {
-		return this.tank.getHitBox();
-	},
-	
-	controls: function() {
-		return this._controlsTank;
-	}
-});
+		getHitBox: function() {
+			return this.hitBox;
+		},
+		
+		getType: function() {
+			return this.options.type;
+		},
+		
+		getName: function() {
+			return this.options.name;
+		}
+	});
+}());
+

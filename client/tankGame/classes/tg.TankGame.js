@@ -62,7 +62,7 @@ tg.TankGame = new Class({
 		};
 		
 		// Tank
-		this.tank = new tg.Tank({
+		this.tank = new tg.OwnTank({
 			game: this
 		});
 		
@@ -144,16 +144,17 @@ tg.TankGame = new Class({
 					console.log('%s has joined the fray', enemyInfo.name);
 				}
 				
-				var otherTank = new tg.OtherTank({
+				var enemyTank = new tg.Tank({
 					game: that,
+					type: 'enemy',
 					name: enemyInfo.name,
-					position: enemyInfo.pos,
+					position: new THREE.Vector3(enemyInfo.pos[0], 0, enemyInfo.pos[1]),
 					rotation: enemyInfo.rot,
 					turretRotation: enemyInfo.tRot
 				});
 
-				this._list.push(otherTank);
-				this._map[enemyInfo.name] = otherTank; // this._map.set(enemyInfo.name, otherTank);
+				this._list.push(enemyTank);
+				this._map[enemyInfo.name] = enemyTank; // this._map.set(enemyInfo.name, otherTank);
 			}
 		};
 		
@@ -259,7 +260,7 @@ tg.TankGame = new Class({
 			this.tank.reset(message.pos, message.rot, message.tRot);
 		}
 		else {
-			if (!this.enemies.do(message.name, 'setPosition', [message.pos, message.rot, message.tRot])) {
+			if (!this.enemies.do(message.name, 'setPosition', [message.pos, message.rot, message.rot+message.tRot])) {
 				this.enemies.add(message);
 			}
 		}
@@ -537,11 +538,11 @@ tg.TankGame = new Class({
 	},
 	
 	moveTank: function(delta) {
-		var tankObj = this.tank.tank;
+		var tankObj = this.tank;
 		
 		// Calculate the future position of the tank
 		var curPos = tankObj.getPosition();
-		var newPos = tankObj.evaluateControls(delta, this.tank.controls());
+		var newPos = tankObj.evaluateControls(delta, this.tank.controls, true);
 		
 		// Adjust position
 		newPos.position = [
@@ -550,7 +551,7 @@ tg.TankGame = new Class({
 		];
 		
 		// Set position
-		tankObj.setPosition(newPos.position);
+		tankObj.setPosition(newPos.position, newPos.tankOrientation);
 	},
 	
 	switchView: function() {

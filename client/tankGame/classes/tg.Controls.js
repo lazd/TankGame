@@ -1,13 +1,13 @@
 tg.Tank.prototype.keyMap = {
-  keyStateUp		: "up",
-  keyStateUp2		: "w",
-  keyStateDown	: "down",
-  keyStateDown2	: "s",
-  keyStateLeft	: "left",
-  keyStateLeft2	: "a",
-  keyStateRight	: "right",
-  keyStateRight2	: "d",
-  keyStateFire	: "space"
+	keyStateUp: "up",
+	keyStateUp2: "w",
+	keyStateDown: "down",
+	keyStateDown2: "s",
+	keyStateLeft: "left",
+	keyStateLeft2: "a",
+	keyStateRight: "right",
+	keyStateRight2: "d",
+	keyStateFire: "space"
 };
 
 
@@ -45,7 +45,7 @@ tg.Tank.prototype.controlsLoopCb = function(delta, now) {
 		this.getTurret().rotation.y = targetAngle - tankRotation + Math.PI*1.5;
 	}
 	else if (this.game.pointerLocked) {
-		// do nothin
+		// do nothing
 		if (this.game.customRotation !== undefined)
 			this.getTurret().rotation.y = this.game.customRotation - tankRotation;
 	}
@@ -57,9 +57,9 @@ tg.Tank.prototype.controlsLoopCb = function(delta, now) {
 		this.getTurret().rotation.y = targetAngle - tankRotation - Math.PI*1.5;
 	}
 		
-	this.controls().moveLeft		= keyboard.pressed(this.keyMap.keyStateLeft) || keyboard.pressed(this.keyMap.keyStateLeft2);
-	this.controls().moveRight		= keyboard.pressed(this.keyMap.keyStateRight) || keyboard.pressed(this.keyMap.keyStateRight2);
-	this.controls().moveForward		= keyboard.pressed(this.keyMap.keyStateUp) || keyboard.pressed(this.keyMap.keyStateUp2);
-	this.controls().moveBackward	= keyboard.pressed(this.keyMap.keyStateDown) || keyboard.pressed(this.keyMap.keyStateDown2);
-	this.controls().fire			= keyboard.pressed(this.keyMap.keyStateFire) || mouse.buttons().left;
+	this.controls.moveLeft		= keyboard.pressed(this.keyMap.keyStateLeft) || keyboard.pressed(this.keyMap.keyStateLeft2);
+	this.controls.moveRight		= keyboard.pressed(this.keyMap.keyStateRight) || keyboard.pressed(this.keyMap.keyStateRight2);
+	this.controls.moveForward		= keyboard.pressed(this.keyMap.keyStateUp) || keyboard.pressed(this.keyMap.keyStateUp2);
+	this.controls.moveBackward	= keyboard.pressed(this.keyMap.keyStateDown) || keyboard.pressed(this.keyMap.keyStateDown2);
+	this.controls.fire			= keyboard.pressed(this.keyMap.keyStateFire) || mouse.buttons().left;
 };

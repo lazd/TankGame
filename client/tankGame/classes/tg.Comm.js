@@ -57,7 +57,7 @@ tg.Comm = new Class({
 	
 	connected: function() {
 		var time = new Date().getTime();
-		var tankPosition = this.tank.getPosition();
+		var tankPosition = this.tank.getPositionPacket();
 		
 		var packet = {
 			evt: 'joined',
@@ -76,7 +76,7 @@ tg.Comm = new Class({
 		
 		// Never send faster than tg.config.comm.interval
 		if (time-this.lastMessageTime >= tg.config.comm.interval) {
-			var tankPosition = this.tank.getPosition();
+			var tankPosition = this.tank.getPositionPacket();
 
 			// If tank moved, send packet
 			if (Math.abs(this.lastRotation-tankPosition.rot) >= 0.01 ||
