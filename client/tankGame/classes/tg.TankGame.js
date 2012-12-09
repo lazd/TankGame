@@ -37,8 +37,10 @@ tg.TankGame = new Class({
 		$(document).on('keydown', function(evt) {
 			if (evt.which == 86) // switch camera when V is pressed
 				that.switchView();
-			if (evt.which == 81)
+			else if (evt.which == 81)
 				that.currentWeapon = that.currentWeapon == 'bullet' ? 'missile' : 'bullet';
+			else if (evt.which == 80)
+				that.sound.enabled = !that.sound.enabled;
 		});
 		
 		$(document).on('mousemove', function(e) {
@@ -173,6 +175,10 @@ tg.TankGame = new Class({
 			server: tg.config.comm.server
 		});
 		
+		// Add radar, if available
+		if (tg.Radar)
+			this.radar = new tg.Radar({ game: this });
+		
 		this.comm.on('fire', this.handleEnemyFire);
 		
 		this.comm.on('hit', this.handleHit);
@@ -293,13 +299,13 @@ tg.TankGame = new Class({
 	handleEnemyFire: function(message) {
 		var time = new Date().getTime();
 		
-		this.sound.play('fire_enemy');
+		var bulletPosition = new THREE.Vector3(message.pos[0], 0, message.pos[1]);
 		
-		var bulletModel
+		var bulletModel;
 		if (message.type == 'missile') {
 			bulletModel = new tg.Missile({
 				game: this,
-				position: new THREE.Vector3(message.pos[0], 0, message.pos[1]),
+				position: bulletPosition,
 				rotation: message.rot,
 				type: 'enemy'
 			});
@@ -312,6 +318,16 @@ tg.TankGame = new Class({
 				type: 'enemy'
 			});
 		}
+		
+		// Calculate distance to tank that fired bullet
+		var distance = this.tank.getRoot().position.distanceTo(bulletPosition);
+		
+		// Calculated volume based on distance
+		var volume = Math.max(1 - distance/1600, 0);
+		
+		// Play sound
+		var soundInfo = tg.config.weapons[message.type].sound;
+		this.sound.play(soundInfo.file, soundInfo.volume*volume);
 		
 		this.enemyBullets.push({
 			instance: bulletModel,
@@ -562,30 +578,30 @@ tg.TankGame = new Class({
 		var objects = [];
 		
 		// Self
-		var pos = this.tank.getRoot().position;
+		var pos = this.tank.getRoot().position.clone();
 		objects.push({
 			type: 'Tank',
 			alliance: 'self',
-			pos: [pos.x, pos.z]
+			pos: pos
 		});
 		
 		// Enemies
 		this.enemies.forEach(function(enemy) {
-			var pos = enemy.getRoot().position;
+			var pos = enemy.getRoot().position.clone();
 			objects.push({
 				type: 'Tank',
 				alliance: 'enemy',
-				pos: [pos.x, pos.z]
+				pos: pos
 			});
 		});
 		
 		// Map items
 		this.mapItems.forEach(function(mapItem) {
-			var pos = mapItem.getRoot().position;
+			var pos = mapItem.getRoot().position.clone();
 			objects.push({
 				type: mapItem.toString(),
 				alliance: 'none',
-				pos: [pos.x, pos.z]
+				pos: pos
 			});
 		});
 		
