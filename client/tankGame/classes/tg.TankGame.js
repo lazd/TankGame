@@ -319,11 +319,8 @@ tg.TankGame = new Class({
 			});
 		}
 		
-		// Calculate distance to tank that fired bullet
-		var distance = this.tank.getRoot().position.distanceTo(bulletPosition);
-		
 		// Calculated volume based on distance
-		var volume = Math.max(1 - distance/1600, 0);
+		var volume = this.getVolumeAt(bulletPosition);
 		
 		// Play sound
 		var soundInfo = tg.config.weapons[message.type].sound;
@@ -334,6 +331,13 @@ tg.TankGame = new Class({
 			type: message.type,
 			time: time
 		});
+	},
+	
+	getVolumeAt: function(point) {
+		var distance = this.tank.getRoot().position.distanceTo(point);
+		var volume = 1 - distance/tg.config.sound.silentDistance;
+		console.log(volume);
+		return Math.min(Math.max(volume, 0), 1);
 	},
 	
 	handleHit: function(message) {
@@ -417,7 +421,7 @@ tg.TankGame = new Class({
 				var itemModel = mapItem.getHitBox();
 				
 				if (this.isHit(itemModel, bulletModel, bullet.type)) {
-					this.sound.play('hit_building');
+					this.sound.play('hit_building', this.getVolumeAt(mapItem.getRoot().position));
 					
 					// Remove HP from map item
 					{ // TEMPORARY REMOVE THIS
@@ -512,7 +516,7 @@ tg.TankGame = new Class({
 						if (this.options.debug.bulletCollisions)
 							console.warn('Bullet hit map item...');
 
-						this.sound.play('hit_building');
+						this.sound.play('hit_building', this.getVolumeAt(mapItem.getRoot().position));
 						
 						// Tell the server the map item took a hit
 						//this.comm.hit(mapItemName);
@@ -540,7 +544,7 @@ tg.TankGame = new Class({
 				
 						enemy.takeHit();
 						
-						this.sound.play('hit_tank');
+						this.sound.play('hit_tank', this.getVolumeAt(enemy.getRoot().position));
 						this.comm.hit(enemy.getName(), bullet.type);
 				
 						bullet.instance.destruct();

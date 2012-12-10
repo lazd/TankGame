@@ -27,6 +27,9 @@ var tg = {
 			fadeTime: 5000,
 			distance: 5
 		},
+		sound: {
+			silentDistance: 1500
+		},
 		tank: {
 			maxSpeed: 75,
 			maxReverseSpeed: -75,
@@ -53,7 +56,7 @@ var tg = {
 				hitDistance: 15,
 				sound: {
 					file: 'fire_bullet',
-					volume: 1
+					volume: 0.85
 				}
 			},
 			missile: {

@@ -90,7 +90,7 @@
 			], this.options.time);
 			*/
 
-			tg.game.sound.play('explosion');
+			tg.game.sound.play('explosion', tg.game.getVolumeAt(options.position));
 		},
 		destruct: function() {
 			this.game.unhook(this.update);
