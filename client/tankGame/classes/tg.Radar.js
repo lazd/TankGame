@@ -103,6 +103,12 @@ tg.Radar = new Class({
 		})
 		.forEach(function (pos) {
 			// Draw the blip
+
+			if (Math.pow(- pos.x, 2) +  Math.pow(- pos.z, 2) > Math.pow(100, 2)) {
+                          var theta = Math.atan(pos.z / pos.x);
+                          pos.x = Math.cos(theta)  * 100;
+                          pos.z = Math.sin(theta)  * 100;
+                        }
 			scope.drawCircle(pos.x, pos.z, pos.color);
 		});
 		

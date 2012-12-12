@@ -16,7 +16,7 @@ var tg = {
 	},
 	config: {
 		comm: {
-			server: 'home.lazd.net:1935', // hostname:port (without http://)
+			server: '10.0.1.41:1935', // hostname:port (without http://)
 			interval: 15
 		},
 		colors: {
