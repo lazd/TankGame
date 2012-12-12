@@ -176,8 +176,11 @@ tg.TankGame = new Class({
 		});
 		
 		// Add radar, if available
-		if (tg.Radar)
-			this.radar = new tg.Radar({ game: this });
+		if (tg.Radar) {
+			this.radar = new tg.Radar({
+				game: this
+			});
+		}
 		
 		this.comm.on('fire', this.handleEnemyFire);
 		
@@ -336,7 +339,7 @@ tg.TankGame = new Class({
 	getVolumeAt: function(point) {
 		var distance = this.tank.getRoot().position.distanceTo(point);
 		var volume = 1 - distance/tg.config.sound.silentDistance;
-		console.log(volume);
+		
 		return Math.min(Math.max(volume, 0), 1);
 	},
 	
