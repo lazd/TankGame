@@ -176,11 +176,9 @@ tg.TankGame = new Class({
 		});
 		
 		// Add radar, if available
-		if (tg.Radar) {
-			this.radar = new tg.Radar({
-				game: this
-			});
-		}
+		this.radar = new tg.Radar({
+			game: this
+		});
 		
 		this.comm.on('fire', this.handleEnemyFire);
 		
