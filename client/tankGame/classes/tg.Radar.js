@@ -86,7 +86,7 @@ tg.Radar = new Class({
 		
 		// Draw self in the center
 		this.drawCircle(0, 0, '#'+tg.config.colors.friend.toString(16));
-			
+		
 		var scope = this;
 		objects.filter(function (object) {
 			// Only draw tanks
@@ -102,13 +102,14 @@ tg.Radar = new Class({
 			return pos;
 		})
 		.forEach(function (pos) {
+			var maxPos = scope.size/2-2;
+			
 			// Draw the blip
-
-			if (Math.pow(- pos.x, 2) +  Math.pow(- pos.z, 2) > Math.pow(100, 2)) {
-                          var theta = Math.atan(pos.z / pos.x);
-                          pos.x = Math.cos(theta)  * 100;
-                          pos.z = Math.sin(theta)  * 100;
-                        }
+			if (Math.pow(-pos.x, 2) + Math.pow(-pos.z, 2) > Math.pow(maxPos, 2)) {
+				var theta = Math.atan(pos.z / pos.x);
+				pos.x = Math.cos(theta) * maxPos;
+				pos.z = Math.sin(theta) * maxPos;
+			}
 			scope.drawCircle(pos.x, pos.z, pos.color);
 		});
 		
