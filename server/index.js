@@ -40,6 +40,11 @@ function handler(req, res) {
 // Holds players
 var players = {};
 
+var mapItems = [
+	{ type: 'Barrel', pos: [10, 20], rot: 0, hp: 100 },
+	{ type: 'Crate',  pos: [10, 30], rot: 0, hp: 100 }
+];
+
 var mapSize = 1600;
 var maxSpeed = 200; // units per second
 
@@ -76,6 +81,9 @@ io.sockets.on('connection', function (socket) {
 		
 		// Send list of players
 		socket.emit('player list', players);
+		
+		// Send the map to the players
+		socket.emit('map', mapItems);
 		
 	    socket.set('name', message.name, function() {
 			// Store client info
@@ -119,6 +127,40 @@ io.sockets.on('connection', function (socket) {
 				type: message.type
 			});
 		});
+	});
+	
+	socket.on('mapItem hit', function(message) {
+		// Get the map item
+		var mapItem = mapItems[message.id];
+
+		if (!mapItem) {
+			console.warn('Tried to take hit on non-existant map item at index '+message.id);
+			return;
+		}
+
+		// Subtract the damage
+		mapItem.hp -= mesage.damage;
+	
+		var newMessage = {
+			id: message.id,
+			hp: mapItem.hp
+		};
+		
+		// Destroy if necessary
+		if (mapItems.hp < 0) {
+			
+			// Remove the map item reference
+			mapItems[message.id] = undefined;
+			
+			// Broadcast destroyed
+			socket.emit('mapItem destroyed', newMessage);
+			socket.broadcast('mapItem destroyed', newMessage);
+		}
+		else {
+			// Broadcast hit
+			socket.emit('mapItem hit', newMessage);
+			socket.broadcast('mapItem hit', newMessage);
+		}
 	});
 	
 	socket.on('killed', function(message) {
