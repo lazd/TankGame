@@ -107,6 +107,7 @@ tg.Radar = new Class({
 			// Draw the blip
 			if (Math.pow(-pos.x, 2) + Math.pow(-pos.z, 2) > Math.pow(maxPos, 2)) {
 				var theta = Math.atan(pos.z / pos.x);
+				if (pos.x < 0) theta += Math.PI;
 				pos.x = Math.cos(theta) * maxPos;
 				pos.z = Math.sin(theta) * maxPos;
 			}
